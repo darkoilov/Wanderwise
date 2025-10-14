@@ -3,7 +3,10 @@ import type { NextRequest } from "next/server"
 import { getToken } from "next-auth/jwt"
 
 export async function middleware(req: NextRequest) {
-    const token = await getToken({ req })
+    const token = await getToken({
+        req,
+        secret: process.env.NEXTAUTH_SECRET,
+    })
     const { pathname } = req.nextUrl
 
     // Restrict /admin routes to logged-in admins
@@ -16,7 +19,6 @@ export async function middleware(req: NextRequest) {
         }
     }
 
-    // Redirect logged-in users away from /auth/signin or /auth/signup
     if (
         (pathname.startsWith("/auth/signin") || pathname.startsWith("/auth/signup")) &&
         token

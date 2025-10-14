@@ -1,3 +1,5 @@
+import SeasonalSection from "@/app/(home)/sections/SeasonalSection";
+
 export const revalidate = 300;
 
 import { DiscountModalWrapper } from "@/components/DiscountModal/DiscountModalWrapper";
@@ -15,6 +17,7 @@ export default async function HomePage() {
         <div className="min-h-screen">
             <DiscountModalWrapper />
             <Hero />
+            <SeasonalSection />
             <FeaturedSection />
             <SpecialDealsSection />
             <MissionSection />

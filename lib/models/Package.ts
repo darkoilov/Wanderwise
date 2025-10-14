@@ -60,6 +60,7 @@ export interface PackageFilters {
   search?: string
   page?: number
   limit?: number
+  isSeasonal?: boolean
 }
 
 export interface PackageResponse {

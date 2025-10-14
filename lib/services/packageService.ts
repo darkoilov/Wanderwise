@@ -11,9 +11,13 @@ export class PackageService {
   static async getAllPackages(filters: PackageFilters = {}): Promise<PackageResponse> {
     try {
       const collection = await this.getCollection()
-      const { category, duration, priceRange, search, page = 1, limit = 10 } = filters
+      const { category, duration, priceRange, search, page = 1, limit = 10, isSeasonal } = filters
 
       const query: any = { isVisible: true }
+
+      if (typeof isSeasonal === "boolean") {
+        query.isSeasonal = isSeasonal
+      }
 
       if (category && category !== "all") {
         query.category = category
