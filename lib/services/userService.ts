@@ -191,7 +191,7 @@ export class UserService {
   static async findOrCreateUser(userData: {
     email: string
     name: string
-    image?: string
+    image?: string | any
     provider: "google" | "credentials"
     providerId?: string
     passwordHash?: string // only for credentials

@@ -13,10 +13,10 @@ export class PackageService {
       const collection = await this.getCollection()
       const { category, duration, priceRange, search, page = 1, limit = 10 } = filters
 
-      const query: any = {}
+      const query: any = { isVisible: true }
 
       if (category && category !== "all") {
-        query.category = { $regex: new RegExp(category, "i") }
+        query.category = category
       }
 
       if (search) {
@@ -73,16 +73,6 @@ export class PackageService {
         page,
         totalPages: Math.ceil(total / limit),
       }
-
-      // Mock implementation for v0 preview
-      // const { page = 1, limit = 10 } = filters
-
-      // return {
-      //   packages: mockPackages,
-      //   total: mockPackages.length,
-      //   page,
-      //   totalPages: Math.ceil(mockPackages.length / limit),
-      // }
     } catch (error) {
       console.error("Error fetching packages:", error)
       throw new Error("Failed to fetch packages")
@@ -109,14 +99,12 @@ export class PackageService {
     try {
       const collection = await this.getCollection()
       const packages = await collection
-        .find()
+        .find({category: "featured"})
         .sort({ rating: -1, reviews: -1 })
         .limit(limit)
         .toArray()
       return packages
 
-      // Mock implementation
-      // return mockPackages.slice(0, limit)
     } catch (error) {
       console.error("Error fetching featured packages:", error)
       throw new Error("Failed to fetch featured packages")
@@ -136,11 +124,7 @@ export class PackageService {
       updatedAt: now,
     }
 
-    console.log("[PackageService] Inserting package:", newPackage.title)
-
     const result = await collection.insertOne(newPackage)
-
-    console.log("[PackageService] Inserted package ID:", result.insertedId.toHexString())
 
     return { ...newPackage, _id: result.insertedId }
   } catch (error) {

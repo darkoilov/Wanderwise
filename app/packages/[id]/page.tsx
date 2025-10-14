@@ -114,10 +114,6 @@ export default async function PackageDetailPage({ params }: { params: { id: stri
                 </div>
               ) : null}
 
-              <div className="bg-gradient-to-br from-blue-50 to-purple-50 p-8 rounded-2xl border">
-                <h2 className="text-3xl font-bold text-gray-900 mb-6">Why Book With Us?</h2>
-                <p className="text-gray-700 text-lg leading-relaxed">{packageData.whyBook}</p>
-              </div>
             </div>
 
             {/* Sidebar */}

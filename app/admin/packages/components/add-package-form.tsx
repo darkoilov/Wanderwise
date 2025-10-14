@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus, X } from "lucide-react"
 import { createPackageAction } from "@/app/actions/admin/packages"
 import {uploadToCloudinary} from "@/lib/cloudinary";
+import {Checkbox} from "@/components/ui/checkbox";
 
 type FormState = {
     title: string
@@ -19,13 +20,14 @@ type FormState = {
     image: string
     rating: string
     reviews: string
-    category: "standard" | "featured" | "special" | "lastminute"
+    category: any
     description: string
     highlights: string[]
     includes: string[]
     difficulty: "Easy" | "Moderate" | "Challenging"
     groupSize: string
     order: number
+    isSeasonal: boolean;
 }
 
 type AddPackageFormProps = { onCreated?: (id: string) => void }
@@ -46,6 +48,7 @@ const initialState: FormState = {
     difficulty: "Easy",
     groupSize: "",
     order: 1,
+    isSeasonal: false,
 }
 
 function toNumberOrEmpty(v: string) {
@@ -165,6 +168,7 @@ export function AddPackageForm({ onCreated }: AddPackageFormProps) {
             difficulty: form.difficulty,
             groupSize: form.groupSize.trim(),
             order: form.order || 1,
+            isSeasonal: form.isSeasonal,
         }
 
         if (
@@ -190,7 +194,7 @@ export function AddPackageForm({ onCreated }: AddPackageFormProps) {
         startTransition(async () => {
             const res = await createPackageAction(payload)
             if (!res?.success) {
-                setError(res?.message || "Failed to create package.")
+                setError("Failed to create package.")
                 return
             }
             setForm(initialState)
@@ -241,6 +245,8 @@ export function AddPackageForm({ onCreated }: AddPackageFormProps) {
                                 <SelectItem value="featured">Featured</SelectItem>
                                 <SelectItem value="special">Special Offer</SelectItem>
                                 <SelectItem value="lastminute">Last Minute</SelectItem>
+                                <SelectItem value="Winter Special">Winter Special</SelectItem>
+                                <SelectItem value="JetSet December">JetSet December</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
@@ -294,7 +300,7 @@ export function AddPackageForm({ onCreated }: AddPackageFormProps) {
             </div>
 
             {/* Additional Details */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                 <div>
                     <Label htmlFor="difficulty">Difficulty</Label>
                     <Select value={form.difficulty} onValueChange={onSelectChange("difficulty")}>
@@ -322,6 +328,14 @@ export function AddPackageForm({ onCreated }: AddPackageFormProps) {
                         min={1}
                         value={form.order}
                         onChange={(e) => setForm((f) => ({ ...f, order: Number(e.target.value || 1) }))}
+                    />
+                </div>
+                <div className={"h-10 flex items-center gap-2"}>
+                    <Label htmlFor="isSeasonal">isSeasonal</Label>
+                    <Checkbox
+                        id="isSeasonal"
+                        checked={form.isSeasonal}
+                        onCheckedChange={(v) => setForm((f) => ({ ...f, isSeasonal: !!v }))}
                     />
                 </div>
             </div>

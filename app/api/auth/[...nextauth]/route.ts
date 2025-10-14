@@ -72,7 +72,7 @@ export const authOptions: NextAuthOptions = {
           await UserService.findOrCreateUser({
             email: user.email.toLowerCase(),
             name: user.name ?? "",
-            image: user.image,
+            image: user?.image,
             provider: "google",
             providerId: account.providerAccountId,
           })

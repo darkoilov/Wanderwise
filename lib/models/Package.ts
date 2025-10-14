@@ -4,7 +4,7 @@ import type { Collection } from "mongodb"
 import { ObjectId } from "mongodb"
 
 /** enums */
-export const CATEGORIES = ["standard", "featured", "special", "lastminute"] as const
+export const CATEGORIES = ["standard", "featured", "special", "lastminute", "Winter Special", "JetSet December"] as const
 export type Category = (typeof CATEGORIES)[number]
 
 export const DIFFICULTIES = ["Easy", "Moderate", "Challenging"] as const
@@ -46,6 +46,7 @@ export interface TravelPackage {
 
   order: number
   isVisible: boolean
+  isSeasonal: boolean
 
   createdAt: Date
   updatedAt: Date
@@ -80,6 +81,7 @@ export async function ensurePackageIndexes() {
     { key: { order: 1 }, name: "order_idx" },
     { key: { createdAt: -1 }, name: "createdAt_desc" },
     { key: { category: 1, isVisible: 1 }, name: "category_visible_idx" },
+    { key: { isSeasonal: 1, isVisible: 1 }, name: "seasonal_visible_idx" },
     { key: { title: "text", location: "text", description: "text" }, name: "packages_text_idx" },
   ])
 }

@@ -269,19 +269,12 @@ export default function SignInPage() {
 
     setIsLoading(true)
     try {
-      const res = await signIn("credentials", {
+      await signIn("credentials", {
         email,
         password,
-        redirect: true,
-        callbackUrl: "/",
-      })
-      if (!res) {
-        setError("Unexpected error. Please try again.")
-      } else if (res.error) {
-        setError(res.error === "CredentialsSignin" ? "Invalid email or password" : res.error)
-      } else {
-        router.push(res.url ?? callbackUrl)
-      }
+        redirect: true,         
+        callbackUrl,
+      });
     } catch {
       setError("Something went wrong. Please try again.")
     } finally {

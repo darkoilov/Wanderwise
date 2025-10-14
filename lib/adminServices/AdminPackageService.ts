@@ -39,6 +39,7 @@ export class AdminPackageService {
             difficulty?: string
             isVisible?: boolean
             order?: number | string
+            isSeasonal?: boolean
         }
     ): Promise<TravelPackage> {
         const collection = await this.col()
@@ -78,7 +79,7 @@ export class AdminPackageService {
 
             order: (data as any).order && Number((data as any).order) > 0 ? Number((data as any).order) : await nextOrder(),
             isVisible: (data as any).isVisible !== false,
-
+            isSeasonal: data.isSeasonal,
             createdAt: now,
             updatedAt: now,
         }
@@ -115,6 +116,7 @@ export class AdminPackageService {
         if (updates.sights !== undefined) $set.sights = (updates.sights || []).map(sanitize)
         if ((updates as any).order !== undefined) $set.order = Math.max(1, Math.floor(Number((updates as any).order)))
         if ((updates as any).isVisible !== undefined) $set.isVisible = !!(updates as any).isVisible
+        if ((updates as any).isSeasonal !== undefined) $set.isSeasonal = !!(updates as any).isSeasonal
 
         const result = await collection.updateOne({ _id }, { $set })
         return result.modifiedCount > 0

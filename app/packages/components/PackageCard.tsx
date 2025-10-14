@@ -5,7 +5,7 @@ import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Calendar, Eye, MapPin, Star, Users, ArrowRight } from "lucide-react"
+import {Calendar, Eye, MapPin, Star, Users, ArrowRight, Snowflake, Gem, Gift, Plane} from "lucide-react"
 import type { TravelPackage } from "@/lib/models/Package"
 import { formatPrice } from "@/lib/utils"
 
@@ -18,11 +18,23 @@ export default function PackageCard({ pkg, variant = "default" }: Props) {
             : 0
 
     const isDeal = variant === "deal" || save > 0
-    const badgeClass = isDeal ? "bg-red-600" : "bg-blue-600"
-    const ctaClass = isDeal ? "bg-red-600 hover:bg-red-700" : "bg-blue-600 hover:bg-blue-700"
+
+    const categoryIcons: Record<string, React.ReactNode> = {
+        standard: <Gem className="h-3 w-3" />,
+        featured: <Star className="h-3 w-3" />,
+        special: <Gift className="h-3 w-3" />,
+        "Winter Special": <Snowflake className="h-3 w-3" />,
+        "JetSet December": <Plane className="h-3 w-3" />,
+    }
 
     return (
-        <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300 group border-0 shadow-lg">
+        // <Card className="overflow-hidden hover:shadow-2xl transition-all duration-300 group border-0 shadow-lg">
+        <Card
+            key={pkg._id?.toString()}
+            className={`overflow-hidden hover:shadow-2xl transition-all duration-300 group border-0 shadow-lg ${
+                pkg.isSeasonal ? "ring-2 ring-blue-500" : ""
+            }`}
+        >
             <div className="relative h-72 overflow-hidden">
                 <Image
                     src={pkg.image || "/placeholder.svg"}
@@ -34,16 +46,26 @@ export default function PackageCard({ pkg, variant = "default" }: Props) {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
                 <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
-                    <Badge className={`${badgeClass} text-white font-medium px-3 py-1`}>{pkg.category}</Badge>
-                    <Badge className="bg-white/95 text-gray-900 font-medium px-3 py-1">
-                        <Star className="h-3 w-3 mr-1 fill-current text-yellow-500" />
+                    <Badge
+                        className={`${
+                            pkg.isSeasonal
+                                ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
+                                : "bg-blue-600 text-white"
+                        } font-medium px-3 py-1.5 flex items-center gap-1`}
+                    >
+                        {categoryIcons[pkg.category] && categoryIcons[pkg.category]}
+                        {pkg.category}
+                    </Badge>
+
+                    <Badge className="bg-white/95 text-gray-900 font-medium px-3 py-1 flex items-center gap-1">
+                        <Star className="h-3 w-3 fill-current text-yellow-500" />
                         {pkg.rating}
                     </Badge>
                 </div>
 
                 {isDeal && save > 0 && (
                     <div className="absolute bottom-4 left-4">
-                        <Badge className="bg-red-500 text-white font-medium px-3 py-1">
+                        <Badge className="bg-blue-500 text-white font-medium px-3 py-1">
                             Save {formatPrice(save)}
                         </Badge>
                     </div>
@@ -107,7 +129,7 @@ export default function PackageCard({ pkg, variant = "default" }: Props) {
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
-                        <Button className={`${ctaClass} text-white font-medium py-2.5 rounded-lg transition-all duration-200 hover:shadow-lg`}>
+                        <Button className={`bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition-all duration-200 hover:shadow-lg`}>
                             <ArrowRight className="mr-2 h-4 w-4" />
                             Book Now
                         </Button>
