@@ -15,7 +15,6 @@ import CtaSection from "./(home)/sections/CtaSection";
 export default async function HomePage() {
     return (
         <div className="min-h-screen">
-            test
             <DiscountModalWrapper />
             <Hero />
             <SeasonalSection />
