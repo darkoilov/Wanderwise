@@ -15,10 +15,10 @@ export default async function Navbar() {
     { name: "Home", href: "/" },
     { name: "About", href: "/about" },
     { name: "Packages", href: "/packages" },
+    { name: "How It Works", href: "/how-it-works" },
     { name: "Custom Itinerary", href: "/custom-itinerary" },
     { name: "Blog", href: "/blog" },
     { name: "Testimonials", href: "/testimonials" },
-    { name: "How It Works", href: "/how-it-works" },
     { name: "Contact", href: "/contact" },
   ]
 

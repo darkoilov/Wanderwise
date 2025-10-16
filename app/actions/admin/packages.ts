@@ -4,9 +4,7 @@
 import { revalidatePath } from "next/cache"
 import { AdminPackageService } from "@/lib/adminServices/AdminPackageService"
 
-// Optionally add an auth guard here
 async function requireAdmin() {
-    // check session or role
     return true
 }
 

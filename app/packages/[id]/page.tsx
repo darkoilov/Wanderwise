@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Star, MapPin, Calendar, Plane, Home, Map, Target, Utensils, ArrowLeft, Send, Phone, MessageCircle } from "lucide-react"
 import PackageCarousel from "./components/package-carousel"
 import {PackageService} from "@/lib/services/packageService";
+import {formatPrice} from "@/lib/utils";
 
 const ICONS = { Plane, Home, Map, Target, Utensils } as const
 type IconKey = keyof typeof ICONS
@@ -49,9 +50,9 @@ export default async function PackageDetailPage({ params }: { params: { id: stri
 
             <div className="text-right bg-white p-6 rounded-xl shadow-sm border">
               <div className="flex items-center gap-3 mb-2">
-                <span className="text-4xl font-bold text-blue-600">{packageData.price}</span>
+                <span className="text-4xl font-bold text-blue-600">{formatPrice(packageData.price)}</span>
                 {packageData.originalPrice && (
-                  <span className="text-2xl text-gray-400 line-through">{packageData.originalPrice}</span>
+                  <span className="text-2xl text-gray-400 line-through">{formatPrice(packageData.originalPrice)}</span>
                 )}
               </div>
               <p className="text-gray-600 font-medium">per person</p>
@@ -122,9 +123,9 @@ export default async function PackageDetailPage({ params }: { params: { id: stri
                 <CardContent className="p-8">
                   <div className="text-center mb-8">
                     <div className="flex items-center justify-center gap-3 mb-3">
-                      <span className="text-4xl font-bold text-blue-600">{packageData.price}</span>
+                      <span className="text-4xl font-bold text-blue-600">{formatPrice(packageData.price)}</span>
                       {packageData.originalPrice && (
-                        <span className="text-2xl text-gray-400 line-through">{packageData.originalPrice}</span>
+                        <span className="text-2xl text-gray-400 line-through">{formatPrice(packageData.originalPrice)}</span>
                       )}
                     </div>
                     <p className="text-gray-600 font-medium">per person</p>
@@ -156,7 +157,7 @@ export default async function PackageDetailPage({ params }: { params: { id: stri
                     <Link href="/custom-itinerary">
                       <Button
                         variant="outline"
-                        className="w-full border-blue-200 text-blue-600 hover:bg-blue-50 font-bold py-4 text-lg rounded-xl transition-all duration-200 bg-transparent"
+                        className="w-full mt-3 border-blue-200 text-blue-600 hover:bg-blue-50 font-bold py-4 text-lg rounded-xl transition-all duration-200 bg-transparent"
                       >
                         <Send className="mr-2 h-5 w-5" />
                         Customize Trip

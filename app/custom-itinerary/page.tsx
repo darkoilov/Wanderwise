@@ -14,20 +14,24 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Badge } from "@/components/ui/badge"
 import { CalendarIcon, MapPin, Users, DollarSign, Heart, Camera, Utensils, Mountain, Waves, Building, TreePine, Send } from 'lucide-react'
 import { format } from "date-fns"
+import {formatPrice} from "@/lib/utils";
 
 export default function CustomItineraryPage() {
   const [startDate, setStartDate] = useState<Date>()
   const [endDate, setEndDate] = useState<Date>()
   const [selectedInterests, setSelectedInterests] = useState<string[]>([])
+  const [submitting, setSubmitting] = useState(false)
+  const [statusMsg, setStatusMsg] = useState<string | null>(null)
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    travelers: "",
+    travelers: undefined as string | undefined,
     budget: "",
     destinations: "",
-    accommodation: "",
-    travelStyle: "",
+    accommodation: undefined as string | undefined,
+    travelStyle: undefined as string | undefined,
     specialRequests: ""
   })
 
@@ -54,10 +58,44 @@ export default function CustomItineraryPage() {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission
-    console.log("Form submitted:", { ...formData, startDate, endDate, selectedInterests })
+    setSubmitting(true)
+    setStatusMsg(null)
+    try {
+      const payload = {
+        ...formData,
+        startDate: startDate ? startDate.toISOString() : null,
+        endDate: endDate ? endDate.toISOString() : null,
+        interests: selectedInterests,
+      }
+
+      const res = await fetch("/api/itinerary-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+
+      if (!res.ok) throw new Error("Request failed")
+      setStatusMsg("Thanks! We’ve received your request. We’ll get back to you within 24 hours.")
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        travelers: undefined,
+        budget: "",
+        destinations: "",
+        accommodation: undefined,
+        travelStyle: undefined,
+        specialRequests: ""
+      })
+      setSelectedInterests([]); setStartDate(undefined); setEndDate(undefined)
+    } catch (err) {
+      setStatusMsg("Sorry, something went wrong sending your request. Please try again.")
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -123,7 +161,10 @@ export default function CustomItineraryPage() {
                     </div>
                     <div>
                       <Label htmlFor="travelers">Number of Travelers *</Label>
-                      <Select onValueChange={(value) => handleInputChange("travelers", value)}>
+                      <Select
+                          value={formData.travelers}
+                          onValueChange={(value) => handleInputChange("travelers", value)}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select number of travelers" />
                         </SelectTrigger>
@@ -219,7 +260,7 @@ export default function CustomItineraryPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <Label>Budget per person (USD) *</Label>
+                  <Label>Budget per person (EUR) *</Label>
                   <RadioGroup 
                     value={formData.budget} 
                     onValueChange={(value) => handleInputChange("budget", value)}
@@ -227,19 +268,30 @@ export default function CustomItineraryPage() {
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="budget" id="budget" />
-                      <Label htmlFor="budget">Budget ($1,000 - $2,500)</Label>
+                      <Label htmlFor="budget">
+                        Budget ({formatPrice(1000)} - {formatPrice(2500)})
+                      </Label>
                     </div>
+
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="mid-range" id="mid-range" />
-                      <Label htmlFor="mid-range">Mid-range ($2,500 - $5,000)</Label>
+                      <Label htmlFor="mid-range">
+                        Mid-range ({formatPrice(2500)} - {formatPrice(5000)})
+                      </Label>
                     </div>
+
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="luxury" id="luxury" />
-                      <Label htmlFor="luxury">Luxury ($5,000+)</Label>
+                      <Label htmlFor="luxury">
+                        Luxury ({formatPrice(5000)}+)
+                      </Label>
                     </div>
+
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="custom" id="custom" />
-                      <Label htmlFor="custom">Custom budget (please specify in special requests)</Label>
+                      <Label htmlFor="custom">
+                        Custom budget (please specify in special requests)
+                      </Label>
                     </div>
                   </RadioGroup>
                 </CardContent>
@@ -283,7 +335,10 @@ export default function CustomItineraryPage() {
                 <CardContent className="space-y-4">
                   <div>
                     <Label htmlFor="accommodation">Accommodation Preference</Label>
-                    <Select onValueChange={(value) => handleInputChange("accommodation", value)}>
+                    <Select
+                        value={formData.accommodation}
+                        onValueChange={(value) => handleInputChange("accommodation", value)}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select accommodation type" />
                       </SelectTrigger>
@@ -299,16 +354,19 @@ export default function CustomItineraryPage() {
                   
                   <div>
                     <Label htmlFor="travel-style">Travel Style</Label>
-                    <Select onValueChange={(value) => handleInputChange("travelStyle", value)}>
+                    <Select
+                        value={formData.travelStyle}
+                        onValueChange={(value) => handleInputChange("travelStyle", value)}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select your travel style" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="relaxed">Relaxed (Slow pace, lots of free time)</SelectItem>
-                        <SelectItem value="balanced">Balanced (Mix of activities and relaxation)</SelectItem>
-                        <SelectItem value="active">Active (Packed schedule, lots of activities)</SelectItem>
-                        <SelectItem value="adventure">Adventure (Off-the-beaten-path experiences)</SelectItem>
-                        <SelectItem value="cultural">Cultural Immersion (Local experiences)</SelectItem>
+                        <SelectItem value="relaxed">Relaxed</SelectItem>
+                        <SelectItem value="balanced">Balanced</SelectItem>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="adventure">Adventure</SelectItem>
+                        <SelectItem value="cultural">Cultural Immersion</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -333,10 +391,11 @@ export default function CustomItineraryPage() {
 
               {/* Submit Button */}
               <div className="text-center">
-                <Button type="submit" size="lg" className="bg-blue-600 hover:bg-blue-700 px-12">
+                <Button type="submit" size="lg" disabled={submitting} className="bg-blue-600 hover:bg-blue-700 px-12">
                   <Send className="mr-2 h-5 w-5" />
-                  Submit Itinerary Request
+                  {submitting ? "Sending..." : "Submit Itinerary Request"}
                 </Button>
+                {statusMsg && <p className="text-sm mt-4">{statusMsg}</p>}
                 <p className="text-sm text-gray-600 mt-4">
                   We'll review your request and get back to you within 24 hours with a personalized itinerary proposal.
                 </p>

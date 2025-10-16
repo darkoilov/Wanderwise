@@ -17,10 +17,10 @@ export default async function HomePage() {
         <div className="min-h-screen">
             <DiscountModalWrapper />
             <Hero />
+            <MissionSection />
             <SeasonalSection />
             <FeaturedSection />
             <SpecialDealsSection />
-            <MissionSection />
             <WhyUsSection />
             <InspirationSection />
             <TestimonialsSection />
