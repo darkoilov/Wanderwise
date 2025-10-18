@@ -1,22 +1,44 @@
+import { Suspense } from "react"
 import PackagesFilters from "@/app/packages/components/PackagesFilters"
-import { PackageService } from "@/lib/services/packageService"
-import PackageCard from "@/app/packages/components/PackageCard"
-import { Button } from "@/components/ui/button"
+import PackagesGrid from "./components/PackagesGrid"
+import {CATEGORIES} from "@/lib/models/Package";
 
-export default async function PackagesPage({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }) {
-  const category = (searchParams.category as string) ?? "all"
-  const duration = (searchParams.duration as string) ?? "all"
-  const priceRange = (searchParams.priceRange as string) ?? "all"
-  const search = (searchParams.search as string) ?? ""
+const DURATIONS = ["short","medium","long","all"] as const
+const PRICE_RANGES = ["budget","mid","luxury","all"] as const
 
-  const { packages } = await PackageService.getAllPackages({
-    page: 1,
-    limit: 500,
-    category,
-    duration,
-    priceRange,
-    search,
-  })
+function pickFromUnion<T extends readonly string[]>(
+    value: string | undefined,
+    allowed: T,
+    fallback: T[number]
+): T[number] {
+    return value && (allowed as readonly string[]).includes(value)
+        ? (value as T[number])
+        : fallback
+}
+
+type RawParams = Record<string, string | string[] | undefined>
+const DEFAULT_LIMIT = 12
+
+function coercePage(v: unknown) {
+    const n = Number(v)
+    return Number.isFinite(n) && n > 0 ? Math.floor(n) : 1
+}
+
+function parseParams(searchParams: RawParams) {
+    return {
+        page: coercePage(searchParams.page),
+        limit: DEFAULT_LIMIT,
+        category: pickFromUnion(searchParams.category as string | undefined, [...CATEGORIES, "all"] as const, "all"),
+        duration: pickFromUnion(searchParams.duration as string | undefined, DURATIONS, "all"),
+        priceRange: pickFromUnion(searchParams.priceRange as string | undefined, PRICE_RANGES, "all"),
+        search: (searchParams.search as string) ?? "",
+    }
+}
+
+export default async function PackagesPage({
+                                             searchParams,
+                                           }: { searchParams: RawParams }) {
+  const parsed = parseParams(searchParams)
 
   return (
       <div className="min-h-screen">
@@ -42,36 +64,39 @@ export default async function PackagesPage({ searchParams }: { searchParams: Rec
         {/* Grid */}
         <section className="py-16">
           <div className="container mx-auto px-4">
-            <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-8">
-              {packages?.map((pkg: any) => (
-                  <PackageCard key={String(pkg._id)} pkg={pkg} />
-              ))}
-            </div>
-
-            <div className="text-center mt-12">
-              <Button
-                  variant="outline"
-                  size="lg"
-                  className="px-8 bg-transparent border-blue-200 text-blue-600 hover:bg-blue-50"
-              >
-                Load More Packages
-              </Button>
-            </div>
+            <Suspense key={JSON.stringify(parsed)} fallback={<GridSkeleton />}>
+              {/* server component that fetches */}
+              <PackagesGrid params={parsed} />
+            </Suspense>
           </div>
         </section>
 
         {/* CTA */}
         <section className="py-20 bg-blue-50">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Can't Find What You're Looking For?</h2>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              Can't Find What You're Looking For?
+            </h2>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               Let us create a completely personalized itinerary tailored to your specific interests, budget, and travel style.
             </p>
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 px-8">
-              Create Custom Itinerary
-            </Button>
+            <a href="/custom-itinerary">
+              <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium">
+                Create Custom Itinerary
+              </button>
+            </a>
           </div>
         </section>
+      </div>
+  )
+}
+
+function GridSkeleton() {
+  return (
+      <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-8">
+        {Array.from({ length: 9 }).map((_, i) => (
+            <div key={i} className="h-96 rounded-xl bg-gray-100 animate-pulse" />
+        ))}
       </div>
   )
 }

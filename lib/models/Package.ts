@@ -84,5 +84,7 @@ export async function ensurePackageIndexes() {
     { key: { category: 1, isVisible: 1 }, name: "category_visible_idx" },
     { key: { isSeasonal: 1, isVisible: 1 }, name: "seasonal_visible_idx" },
     { key: { title: "text", location: "text", description: "text" }, name: "packages_text_idx" },
+    { key: { price: 1 }, name: "price_idx" },
+    { key: { rating: -1, createdAt: -1 }, name: "rating_created_desc" },
   ])
 }
