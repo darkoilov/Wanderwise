@@ -2,19 +2,68 @@ import { getDatabase } from "@/lib/mongodb"
 import type { TravelPackage, PackageFilters, PackageResponse } from "@/lib/models/Package"
 import { ObjectId } from "mongodb"
 
-  const DURATION_REGEX: Record<NonNullable<Exclude<PackageFilters["duration"], "all">>, RegExp> = {
-    short:  /^\s*(?:[1-7])\s*days?/i,
-    medium: /^\s*(?:[8-9]|1[0-4])\s*days?/i,
-    long:   /^\s*(?:1[5-9]|[2-9]\d)\s*days?/i,
+const PRICE_RANGE: Record<Exclude<NonNullable<PackageFilters["priceRange"]>, "all">, any> = {
+  budget: { $lt: 1500 },
+  mid:    { $gte: 1500, $lte: 2500 },
+  luxury: { $gt: 2500 },
+}
+
+/** Build a Mongo $expr that checks overlap of the package's duration string vs. a bucket */
+function buildDurationOverlapExpr(bucket: "short" | "medium" | "long") {
+  const A = bucket === "short"  ? 1  : bucket === "medium" ? 8  : 15
+  const B = bucket === "short"  ? 7  : bucket === "medium" ? 14 : null
+
+  const regexFind = {
+    $regexFind: {
+      input: "$duration",
+      // 2 captures: 1) start, 2) optional end
+      regex: /(\d+)(?:\s*-\s*(\d+))?\s*(?:day|days)?/i,
+    },
   }
 
-  const PRICE_RANGE: Record<NonNullable<Exclude<PackageFilters["priceRange"], "all">>, any> = {
-    budget: { $lt: 1500 },
-    mid:    { $gte: 1500, $lte: 2500 },
-    luxury: { $gt: 2500 },
+  return {
+    $expr: {
+      $let: {
+        vars: { m: regexFind },
+        in: {
+          $cond: [
+            { $not: ["$$m"] },
+            false,
+            {
+              $let: {
+                vars: {
+                  start:  { $toInt: { $arrayElemAt: ["$$m.captures", 0] } },
+                  endStr: { $arrayElemAt: ["$$m.captures", 1] },
+                },
+                in: {
+                  $let: {
+                    vars: {
+                      end: { $ifNull: [{ $toInt: "$$endStr" }, "$$start"] },
+                    },
+                    in:
+                    // long: [15, +∞) → overlap if end >= 15
+                        B == null
+                            ? { $gte: ["$$end", A] }
+                            // finite bucket [A, B]: overlap if end >= A AND start <= B
+                            : { $and: [{ $gte: ["$$end", A] }, { $lte: ["$$start", B] }] }
+                  },
+                },
+              },
+            },
+          ],
+        },
+      },
+    },
   }
+}
 
-  export class PackageService {
+function andPush(query: any, cond: any) {
+  if (!cond) return
+  if (!query.$and) query.$and = []
+  query.$and.push(cond)
+}
+
+export class PackageService {
   private static async getCollection() {
     const db = await getDatabase()
     return db.collection<TravelPackage>("packages")
@@ -39,14 +88,14 @@ import { ObjectId } from "mongodb"
 
     if (search?.trim()) {
       query.$or = [
-        { title:      { $regex: new RegExp(search, "i") } },
-        { location:   { $regex: new RegExp(search, "i") } },
-        { description:{ $regex: new RegExp(search, "i") } },
+        { title:       { $regex: new RegExp(search, "i") } },
+        { location:    { $regex: new RegExp(search, "i") } },
+        { description: { $regex: new RegExp(search, "i") } },
       ]
     }
 
     if (duration && duration !== "all") {
-      query.duration = DURATION_REGEX[duration]
+      andPush(query, buildDurationOverlapExpr(duration))
     }
 
     if (priceRange && priceRange !== "all") {
@@ -56,7 +105,12 @@ import { ObjectId } from "mongodb"
     const skip = Math.max(0, (page - 1) * limit)
 
     const [packages, total] = await Promise.all([
-      collection.find(query).sort({ rating: -1, createdAt: -1 }).skip(skip).limit(limit).toArray(),
+      collection
+          .find(query)
+          .sort({ rating: -1, createdAt: -1 })
+          .skip(skip)
+          .limit(limit)
+          .toArray(),
       collection.countDocuments(query),
     ])
 
@@ -77,8 +131,6 @@ import { ObjectId } from "mongodb"
       const package_ = await collection.findOne({ _id: objectId })
       return package_
 
-      // Mock implementation
-      // return mockPackages.find(pkg => pkg.id === id) || null
     } catch (error) {
       console.error("Error fetching package:", error)
       throw new Error("Failed to fetch package")
@@ -138,8 +190,6 @@ import { ObjectId } from "mongodb"
       )
       return result.modifiedCount > 0
 
-      // Mock implementation
-      // return true
     } catch (error) {
       console.error("Error updating package:", error)
       throw new Error("Failed to update package")

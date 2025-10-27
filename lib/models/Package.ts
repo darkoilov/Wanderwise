@@ -4,7 +4,7 @@ import type { Collection } from "mongodb"
 import { ObjectId } from "mongodb"
 
 /** enums */
-export const CATEGORIES = ["standard", "featured", "special", "lastminute", "Winter Special", "JetSet December"] as const
+export const CATEGORIES = ["standard", "featured", "special", "lastminute"] as const
 export type Category = (typeof CATEGORIES)[number]
 
 export const DIFFICULTIES = ["Easy", "Moderate", "Challenging"] as const

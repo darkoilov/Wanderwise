@@ -13,9 +13,18 @@ type IconKey = keyof typeof ICONS
 
 export default async function PackageDetailPage({ params }: { params: { id: string } }) {
   const packageData = await PackageService.getPackageById(params.id)
+
   if (!packageData) notFound()
 
-  const images = packageData.images?.length ? packageData.images : ["/placeholder.svg"]
+  const images: string[] = [
+    packageData.image,
+    ...(Array.isArray(packageData.images) ? packageData.images : []),
+  ]
+      .filter((u): u is string => typeof u === "string" && u.trim().length > 0)
+      .filter((u, i, arr) => arr.indexOf(u) === i)
+      .slice(0, 20)
+
+  const imagesForCarousel = images.length ? images : ["/placeholder.svg"]
 
   return (
     <div className="min-h-screen">
@@ -65,7 +74,7 @@ export default async function PackageDetailPage({ params }: { params: { id: stri
       <section className="py-8">
         <div className="container mx-auto px-4">
           <div className="relative max-w-5xl mx-auto">
-            <PackageCarousel title={packageData.title} images={images} />
+            <PackageCarousel title={packageData.title} images={imagesForCarousel} />
           </div>
         </div>
       </section>

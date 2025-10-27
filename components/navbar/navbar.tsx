@@ -1,15 +1,16 @@
-// components/navbar.tsx (Server Component)
+// components/navbar/navbar.tsx (Server Component)
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import {FileText, Package, Plane, Settings} from "lucide-react"
+import { Plane, Settings } from "lucide-react"
 import { auth } from "@/lib/auth"
 import NavbarUserMenu from "./navbar-user-menu"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "./ui/dropdown-menu"
-import {DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import MobileMenu from "./mobileMenu"
 
 export default async function Navbar() {
   const session = await auth()
   const user = session?.user || null
+  const isAdmin = !!(user && (user as any).role === "admin")
 
   const navigation = [
     { name: "Home", href: "/" },
@@ -23,12 +24,12 @@ export default async function Navbar() {
   ]
 
   const adminRoutes = [
-    { name: "Packages", href: "/admin/packages", icon: Package },
-    { name: "Blog", href: "/admin/blog", icon: FileText },
+    { name: "Packages", href: "/admin/packages", icon: "package" as const },
+    { name: "Blog", href: "/admin/blog", icon: "fileText" as const },
   ]
 
   return (
-      <nav id="mainNav" className="sticky top-0 w-full bg-white/95 backdrop-blur-sm border-b border-gray-200 z-50 ">
+      <nav id="mainNav" className="sticky top-0 w-full bg-white/95 backdrop-blur-sm border-b border-gray-200 z-50">
         <div className="px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
@@ -50,7 +51,8 @@ export default async function Navbar() {
                     {item.name}
                   </Link>
               ))}
-              {user && user?.role === "admin" && (
+
+              {isAdmin && (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button className="flex items-center space-x-1 text-gray-700 hover:text-blue-600 font-medium transition-colors focus:outline-none">
@@ -59,10 +61,10 @@ export default async function Navbar() {
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="start" className="w-48">
-                      {adminRoutes.map(({ name, href, icon: Icon }) => (
+                      {adminRoutes.map(({ name, href }) => (
                           <DropdownMenuItem key={href} asChild>
                             <Link href={href} className="cursor-pointer">
-                              <Icon className="mr-2 h-4 w-4" />
+                              {/* desktop dropdown can omit icons or add them here since this stays server */}
                               {name}
                             </Link>
                           </DropdownMenuItem>
@@ -77,10 +79,11 @@ export default async function Navbar() {
               <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
                 Book Now
               </Button>
-
-              {/* User Menu */}
               <NavbarUserMenu user={user} />
             </div>
+
+            {/* Mobile Hamburger / Drawer (Client Component) */}
+            <MobileMenu navigation={navigation} isAdmin={isAdmin} adminRoutes={adminRoutes} user={user} />
           </div>
         </div>
       </nav>

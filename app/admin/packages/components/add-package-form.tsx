@@ -1,3 +1,4 @@
+// app/admin/packages/components/add-package-form.tsx
 "use client"
 
 import React, { useState, useTransition } from "react"
@@ -7,66 +8,19 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Plus, X } from "lucide-react"
+import { Checkbox } from "@/components/ui/checkbox"
 import { createPackageAction } from "@/app/actions/admin/packages"
-import {uploadToCloudinary} from "@/lib/cloudinary";
-import {Checkbox} from "@/components/ui/checkbox";
+import { uploadToCloudinary } from "@/lib/cloudinary"
 
-type FormState = {
-    title: string
-    location: string
-    duration: string
-    price: string
-    originalPrice: string
-    image: string
-    rating: string
-    reviews: string
-    category: any
-    description: string
-    highlights: string[]
-    includes: string[]
-    difficulty: "Easy" | "Moderate" | "Challenging"
-    groupSize: string
-    order: number
-    isSeasonal: boolean;
-}
+import {
+    Category,
+    PackageFormValues,
+    initialFormValues,
+    toPackagePayload,
+    validateRequired,
+} from "@/app/admin/packages/components/form-shared"
 
-type AddPackageFormProps = { onCreated?: (id: string) => void }
-
-const initialState: FormState = {
-    title: "",
-    location: "",
-    duration: "",
-    price: "",
-    originalPrice: "",
-    image: "",
-    rating: "4.5",
-    reviews: "",
-    category: "standard",
-    description: "",
-    highlights: [""],
-    includes: [""],
-    difficulty: "Easy",
-    groupSize: "",
-    order: 1,
-    isSeasonal: false,
-}
-
-function toNumberOrEmpty(v: string) {
-    const n = Number(v)
-    return Number.isFinite(n) ? n : undefined
-}
-function compactStringArray(arr: string[]) {
-    return arr.map((s) => s.trim()).filter(Boolean)
-}
-
-function FieldArray({
-                        label,
-                        items,
-                        onAdd,
-                        onRemove,
-                        onUpdate,
-                        placeholder,
-                    }: {
+function FieldArray({...props}: {
     label: string
     items: string[]
     onAdd: () => void
@@ -74,6 +28,7 @@ function FieldArray({
     onUpdate: (index: number, value: string) => void
     placeholder: string
 }) {
+    const { label, items, onAdd, onRemove, onUpdate, placeholder } = props
     return (
         <div>
             <div className="flex items-center justify-between mb-2">
@@ -88,13 +43,7 @@ function FieldArray({
                     <div key={index} className="flex gap-2">
                         <Input value={val} onChange={(e) => onUpdate(index, e.target.value)} placeholder={placeholder} />
                         {items.length > 1 && (
-                            <Button
-                                type="button"
-                                onClick={() => onRemove(index)}
-                                size="icon"
-                                variant="destructive"
-                                aria-label="Remove"
-                            >
+                            <Button type="button" onClick={() => onRemove(index)} size="icon" variant="destructive" aria-label="Remove">
                                 <X className="h-4 w-4" />
                             </Button>
                         )}
@@ -105,26 +54,28 @@ function FieldArray({
     )
 }
 
+type AddPackageFormProps = { onCreated?: (id: string) => void }
+
 export function AddPackageForm({ onCreated }: AddPackageFormProps) {
-    const [form, setForm] = useState<FormState>(initialState)
+    const [form, setForm] = useState<PackageFormValues>(initialFormValues)
     const [error, setError] = useState<string | null>(null)
     const [isPending, startTransition] = useTransition()
     const [isUploading, setIsUploading] = useState(false)
 
     const onChange =
-        <K extends keyof FormState>(key: K) =>
+        <K extends keyof PackageFormValues>(key: K) =>
             (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
                 setForm((f) => ({ ...f, [key]: e.target.value }))
 
     const onSelectChange =
-        <K extends keyof FormState>(key: K) =>
+        <K extends keyof PackageFormValues>(key: K) =>
             (value: any) =>
                 setForm((f) => ({ ...f, [key]: value }))
 
-    const addItem = (key: "highlights" | "includes") => setForm((f) => ({ ...f, [key]: [...f[key], ""] }))
-    const removeItem = (key: "highlights" | "includes", index: number) =>
+    const addItem = (key: "highlights" | "included") => setForm((f) => ({ ...f, [key]: [...f[key], ""] }))
+    const removeItem = (key: "highlights" | "included", index: number) =>
         setForm((f) => ({ ...f, [key]: f[key].filter((_, i) => i !== index) }))
-    const updateItem = (key: "highlights" | "includes", index: number, value: string) =>
+    const updateItem = (key: "highlights" | "included", index: number, value: string) =>
         setForm((f) => {
             const next = [...f[key]]
             next[index] = value
@@ -152,40 +103,12 @@ export function AddPackageForm({ onCreated }: AddPackageFormProps) {
         e.preventDefault()
         setError(null)
 
-        const payload = {
-            title: form.title.trim(),
-            location: form.location.trim(),
-            duration: form.duration.trim(),
-            price: toNumberOrEmpty(form.price),
-            originalPrice: form.originalPrice === "" ? undefined : toNumberOrEmpty(form.originalPrice),
-            image: form.image.trim(),
-            rating: toNumberOrEmpty(form.rating),
-            reviews: toNumberOrEmpty(form.reviews),
-            category: form.category,
-            description: form.description.trim(),
-            highlights: compactStringArray(form.highlights),
-            includes: compactStringArray(form.includes),
-            difficulty: form.difficulty,
-            groupSize: form.groupSize.trim(),
-            order: form.order || 1,
-            isSeasonal: form.isSeasonal,
-        }
-
-        if (
-            !payload.title ||
-            !payload.location ||
-            !payload.duration ||
-            !payload.price ||
-            !payload.image ||
-            payload.rating == null ||
-            payload.rating > 5 ||
-            payload.rating < 0 ||
-            payload.reviews == null
-        ) {
-            setError("Please fill all required fields correctly.")
+        const payload = toPackagePayload(form)
+        const msg = validateRequired(payload)
+        if (msg) {
+            setError(msg)
             return
         }
-
         if (isUploading) {
             setError("Image is still uploading. Please wait a moment.")
             return
@@ -197,7 +120,7 @@ export function AddPackageForm({ onCreated }: AddPackageFormProps) {
                 setError("Failed to create package.")
                 return
             }
-            setForm(initialState)
+            setForm(initialFormValues)
             onCreated?.(res.id as string)
         })
     }
@@ -211,72 +134,45 @@ export function AddPackageForm({ onCreated }: AddPackageFormProps) {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Basic Info */}
                 <div className="space-y-4">
                     <div>
                         <Label htmlFor="title">Package Title *</Label>
-                        <Input
-                            id="title"
-                            value={form.title}
-                            onChange={onChange("title")}
-                            placeholder="e.g., Discover Sardinia – Your Tailored Escape"
-                            required
-                        />
+                        <Input id="title" value={form.title} onChange={onChange("title")} placeholder="e.g., Discover Sardinia" required />
                     </div>
 
                     <div>
                         <Label htmlFor="location">Location *</Label>
-                        <Input id="location" value={form.location} onChange={onChange("location")} placeholder="e.g., Sardinia, Italy" required />
+                        <Input id="location" value={form.location} onChange={onChange("location")} placeholder="Sardinia, Italy" required />
                     </div>
 
                     <div>
                         <Label htmlFor="duration">Duration *</Label>
-                        <Input id="duration" value={form.duration} onChange={onChange("duration")} placeholder="e.g., 10 days" required />
+                        <Input id="duration" value={form.duration} onChange={onChange("duration")} placeholder="10 days" required />
                     </div>
 
                     <div>
                         <Label htmlFor="category">Category *</Label>
                         <Select value={form.category} onValueChange={onSelectChange("category")}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select category" />
-                            </SelectTrigger>
+                            <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="standard">Standard</SelectItem>
                                 <SelectItem value="featured">Featured</SelectItem>
                                 <SelectItem value="special">Special Offer</SelectItem>
                                 <SelectItem value="lastminute">Last Minute</SelectItem>
-                                <SelectItem value="Winter Special">Winter Special</SelectItem>
-                                <SelectItem value="JetSet December">JetSet December</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
                 </div>
 
-                {/* Pricing & Details */}
                 <div className="space-y-4">
                     <div>
                         <Label htmlFor="price">Price (€) *</Label>
-                        <Input
-                            id="price"
-                            type="number"
-                            inputMode="decimal"
-                            value={form.price}
-                            onChange={onChange("price")}
-                            placeholder="1500"
-                            required
-                        />
+                        <Input id="price" type="number" inputMode="decimal" value={form.price} onChange={onChange("price")} placeholder="1500" required />
                     </div>
 
                     <div>
                         <Label htmlFor="originalPrice">Original Price (€) — Optional</Label>
-                        <Input
-                            id="originalPrice"
-                            type="number"
-                            inputMode="decimal"
-                            value={form.originalPrice}
-                            onChange={onChange("originalPrice")}
-                            placeholder="1800"
-                        />
+                        <Input id="originalPrice" type="number" inputMode="decimal" value={form.originalPrice} onChange={onChange("originalPrice")} placeholder="1800" />
                     </div>
 
                     <div>
@@ -286,27 +182,16 @@ export function AddPackageForm({ onCreated }: AddPackageFormProps) {
 
                     <div>
                         <Label htmlFor="reviews">Number of Reviews *</Label>
-                        <Input
-                            id="reviews"
-                            type="number"
-                            inputMode="numeric"
-                            value={form.reviews}
-                            onChange={onChange("reviews")}
-                            placeholder="87"
-                            required
-                        />
+                        <Input id="reviews" type="number" inputMode="numeric" value={form.reviews} onChange={onChange("reviews")} placeholder="87" required />
                     </div>
                 </div>
             </div>
 
-            {/* Additional Details */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                 <div>
                     <Label htmlFor="difficulty">Difficulty</Label>
                     <Select value={form.difficulty} onValueChange={onSelectChange("difficulty")}>
-                        <SelectTrigger>
-                            <SelectValue />
-                        </SelectTrigger>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
                             <SelectItem value="Easy">Easy</SelectItem>
                             <SelectItem value="Moderate">Moderate</SelectItem>
@@ -317,43 +202,31 @@ export function AddPackageForm({ onCreated }: AddPackageFormProps) {
 
                 <div>
                     <Label htmlFor="groupSize">Group Size</Label>
-                    <Input id="groupSize" value={form.groupSize} onChange={onChange("groupSize")} placeholder="e.g., 2-8 people" />
+                    <Input id="groupSize" value={form.groupSize} onChange={onChange("groupSize")} placeholder="2-8 people" />
                 </div>
 
                 <div>
                     <Label htmlFor="order">Display Order</Label>
-                    <Input
-                        id="order"
-                        type="number"
-                        min={1}
-                        value={form.order}
-                        onChange={(e) => setForm((f) => ({ ...f, order: Number(e.target.value || 1) }))}
-                    />
+                    <Input id="order" type="number" min={1} value={form.order} onChange={(e) => setForm((f) => ({ ...f, order: Number(e.target.value || 1) }))} />
                 </div>
-                <div className={"h-10 flex items-center gap-2"}>
-                    <Label htmlFor="isSeasonal">isSeasonal</Label>
-                    <Checkbox
-                        id="isSeasonal"
-                        checked={form.isSeasonal}
-                        onCheckedChange={(v) => setForm((f) => ({ ...f, isSeasonal: !!v }))}
-                    />
+
+                <div className="h-10 flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                        <Label htmlFor="isSeasonal">Seasonal</Label>
+                        <Checkbox id="isSeasonal" checked={form.isSeasonal} onCheckedChange={(v) => setForm((f) => ({ ...f, isSeasonal: !!v }))} />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Label htmlFor="isVisible">Visible</Label>
+                        <Checkbox id="isVisible" checked={form.isVisible} onCheckedChange={(v) => setForm((f) => ({ ...f, isVisible: !!v }))} />
+                    </div>
                 </div>
             </div>
 
-            {/* Description */}
             <div>
                 <Label htmlFor="description">Description *</Label>
-                <Textarea
-                    id="description"
-                    value={form.description}
-                    onChange={onChange("description")}
-                    placeholder="Describe the package experience..."
-                    rows={4}
-                    required
-                />
+                <Textarea id="description" value={form.description} onChange={onChange("description")} placeholder="Describe the package..." rows={4} required />
             </div>
 
-            {/* Image upload + URL */}
             <div className="grid gap-2">
                 <Label htmlFor="imageFile">Image *</Label>
                 <Input id="imageFile" type="file" accept="image/*" onChange={onPickFile} />
@@ -361,42 +234,35 @@ export function AddPackageForm({ onCreated }: AddPackageFormProps) {
                 {form.image && (
                     <>
                         <div className="text-xs text-muted-foreground break-all">{form.image}</div>
-                        <Input
-                            value={form.image}
-                            onChange={(e) => setForm((s) => ({ ...s, image: e.target.value }))}
-                            placeholder="https://res.cloudinary.com/..."
-                        />
+                        <Input value={form.image} onChange={(e) => setForm((s) => ({ ...s, image: e.target.value }))} placeholder="https://res.cloudinary.com/..." />
                     </>
                 )}
             </div>
 
-            {/* Highlights */}
             <FieldArray
                 label="Highlights (shown as badges)"
                 items={form.highlights}
                 onAdd={() => addItem("highlights")}
                 onRemove={(i) => removeItem("highlights", i)}
                 onUpdate={(i, v) => updateItem("highlights", i, v)}
-                placeholder="e.g., Flight & Transfers"
+                placeholder="Flight & Transfers"
             />
 
-            {/* Includes */}
             <FieldArray
                 label="What's Included (detailed list)"
-                items={form.includes}
-                onAdd={() => addItem("includes")}
-                onRemove={(i) => removeItem("includes", i)}
-                onUpdate={(i, v) => updateItem("includes", i, v)}
-                placeholder="e.g., Round-trip flights & transfers"
+                items={form.included}
+                onAdd={() => addItem("included")}
+                onRemove={(i) => removeItem("included", i)}
+                onUpdate={(i, v) => updateItem("included", i, v)}
+                placeholder="Round-trip flights & transfers"
             />
 
-            {/* Actions */}
             <div className="flex justify-end gap-4 pt-4 border-t">
                 <Button
                     type="button"
                     variant="outline"
                     onClick={() => {
-                        setForm(initialState)
+                        setForm(initialFormValues)
                         setError(null)
                     }}
                     disabled={isPending || isUploading}
