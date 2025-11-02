@@ -64,106 +64,84 @@ export default function AboutPage() {
   return (
       <div className="min-h-screen">
         {/* Hero Section */}
-         <section className="relative min-h-[500px] md:min-h-[600px] flex items-center justify-center overflow-hidden">
-        {/* Background Image with overlay */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/young-couple-traveling-world.jpg"
-            alt="Young couple traveling"
-            fill
-            className="object-cover"
-            style={{ objectPosition: "center 30%" }}
-            priority
-          />
-          {/* Smooth overlay */}
-          <div className="absolute inset-0 bg-black/40"></div>
-        </div>
-
-        {/* Content */}
-        <div className="relative z-10 container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center text-white">
-            <div className="mb-6 flex justify-center">
-              <Badge className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white border-white/30 px-4 py-1.5">
-                Our Story
-              </Badge>
+        <section className="relative py-10 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto text-center">
+              <h1 className="text-5xl font-bold mb-6">We're a Young Couple from Germany</h1>
+              <p className="text-xl mb-8 text-blue-100">
+                With a shared passion: traveling the world and discovering its hidden gems
+              </p>
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight text-balance">
-              We're a Young Couple from Germany
-            </h1>
-            <p className="text-xl md:text-2xl text-white/90 text-balance">
-              With a shared passion: traveling the world and discovering its hidden gems
-            </p>
           </div>
-        </div>
-      </section>
+        </section>
 
 
         {/* Our Story Section */}
         <section className="py-10">
-        <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="relative">
-              <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl">
-                <Image
-                  src="/young-couple-traveling-world.jpg"
-                  alt="Young couple traveling"
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="absolute -bottom-6 -right-6 bg-white p-6 rounded-lg shadow-xl max-w-xs">
-                <div className="flex items-center space-x-3">
-                  <div className="bg-blue-100 p-3 rounded-full">
-                    <Plane className="h-6 w-6 text-blue-600" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900">25+ Countries</p>
-                    <p className="text-sm text-gray-600">Explored Together</p>
+          <div className="container mx-auto px-4">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div className="relative">
+                <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl">
+                  <Image
+                      src="/placeholder.svg?height=500&width=600&text=Young+Couple+Traveling"
+                      alt="Young couple traveling"
+                      fill
+                      className="object-cover"
+                  />
+                </div>
+                <div className="absolute -bottom-6 -right-6 bg-white p-6 rounded-lg shadow-xl max-w-xs">
+                  <div className="flex items-center space-x-3">
+                    <div className="bg-blue-100 p-3 rounded-full">
+                      <Plane className="h-6 w-6 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900">25+ Countries</p>
+                      <p className="text-sm text-gray-600">Explored Together</p>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">Our Story</h2>
-              <div className="space-y-4 text-gray-700 text-lg">
-                <p>
-                  Together, we've explored over <strong>25 countries</strong>, always with curiosity in our hearts and
-                  backpacks full of dreams.
-                </p>
-                <p>
-                  What started as a hobby soon became something more. We've always loved planning our own trips –{" "}
-                  <strong>tailored to our style, our pace, and our imagination</strong>.
-                </p>
-                <p>
-                  We don't just chase tourist attractions. We{" "}
-                  <strong>dive into cultures, learn local phrases, taste traditional dishes</strong>, and find those
-                  magical places that don't always make it into the guidebooks.
-                </p>
-                <p>
-                  Over time, our journeys inspired not only friends and family, but also our{" "}
-                  <strong>growing online community</strong>. That's when we decided to turn our passion into something
-                  meaningful – a way to help others experience the world in their own unique way.
-                </p>
-              </div>
-              <div className="mt-8 flex flex-wrap gap-4">
-                <Link href="/packages">
-                  <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-                    <Compass className="mr-2 h-5 w-5" />
-                    Explore Our Packages
-                  </Button>
-                </Link>
-                <Link href="/custom-itinerary">
-                  <Button size="lg" variant="outline">
-                    <Map className="mr-2 h-5 w-5" />
-                    Plan Custom Trip
-                  </Button>
-                </Link>
+              <div>
+                <h2 className="text-4xl font-bold text-gray-900 mb-6">Our Story</h2>
+                <div className="space-y-4 text-gray-700 text-lg">
+                  <p>
+                    Together, we've explored over <strong>25 countries</strong>, always with curiosity in our hearts and
+                    backpacks full of dreams.
+                  </p>
+                  <p>
+                    What started as a hobby soon became something more. We've always loved planning our own trips –{" "}
+                    <strong>tailored to our style, our pace, and our imagination</strong>.
+                  </p>
+                  <p>
+                    We don't just chase tourist attractions. We{" "}
+                    <strong>dive into cultures, learn local phrases, taste traditional dishes</strong>, and find those
+                    magical places that don't always make it into the guidebooks.
+                  </p>
+                  <p>
+                    Over time, our journeys inspired not only friends and family, but also our{" "}
+                    <strong>growing online community</strong>. That's when we decided to turn our passion into something
+                    meaningful – a way to help others experience the world in their own unique way.
+                  </p>
+                </div>
+                <div className="mt-8 flex flex-wrap gap-4">
+                  <Link href="/packages">
+                    <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+                      <Compass className="mr-2 h-5 w-5" />
+                      Explore Our Packages
+                    </Button>
+                  </Link>
+                  <Link href="/custom-itinerary">
+                    <Button size="lg" variant="outline">
+                      <Map className="mr-2 h-5 w-5" />
+                      Plan Custom Trip
+                    </Button>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
         {/* Stats Section */}
         <section className="py-10 bg-gradient-to-br from-blue-50 to-purple-50">

@@ -4,7 +4,7 @@ export default async function CustomItineraryPage() {
   return (
       <div className="min-h-screen">
         {/* Hero Section */}
-        <section className="relative py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <section className="relative py-10 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-5xl font-bold mb-6">Custom Itinerary</h1>
@@ -25,7 +25,7 @@ export default async function CustomItineraryPage() {
         </section>
 
         {/* Process Section */}
-        <section className="py-20 bg-gray-50">
+        <section className="py-10 bg-gray-50">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-16">

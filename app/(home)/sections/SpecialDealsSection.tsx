@@ -9,7 +9,7 @@ export default async function SpecialDealsSection() {
     const { packages: specialDeals } = await PackageService.getAllPackages({ page: 1, limit: 6, category: "special" });
 
     return (
-        <section className="py-20 bg-gray-50">
+        <section className="py-10 bg-gray-50">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-16">
                     <Badge className="bg-blue-500 text-white mb-4 px-4 py-2 text-lg">Limited Time Offers</Badge>
@@ -26,9 +26,13 @@ export default async function SpecialDealsSection() {
                 </div>
 
                 <div className="text-center mt-12">
-                    <Link href="/last-minute">
-                        <Button size="lg" className="bg-blue-600 hover:bg-blue-700 px-8">
-                            View All Last Minute Deals
+                    <Link href="/packages">
+                        <Button
+                            variant="outline"
+                            size="lg"
+                            className="px-8 bg-transparent border-blue-200 text-blue-600 hover:bg-blue-50"
+                        >
+                            View All Packages
                             <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
                     </Link>

@@ -4,7 +4,7 @@ import {Button} from "@/components/ui/button";
 
 export default function WhyUsSection() {
     return (
-        <section className="py-20 bg-gradient-to-b from-white to-blue-50">
+        <section className="py-10 bg-gradient-to-b from-white to-blue-50">
         <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
                 <div className="inline-flex items-center gap-2 bg-blue-100 px-4 py-2 rounded-full text-blue-700 font-semibold mb-6">

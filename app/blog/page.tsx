@@ -136,7 +136,7 @@ export default async function BlogPage() {
   return (
       <div className="min-h-screen">
         {/* Hero */}
-        <section className="relative py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <section className="relative py-10 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-5xl font-bold mb-6">Travel Blog</h1>
@@ -204,7 +204,7 @@ export default async function BlogPage() {
         </section>
 
         {/* Newsletter (unchanged) */}
-        <section className="py-20 bg-blue-600 text-white">
+        <section className="py-10 bg-blue-600 text-white">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-4xl font-bold mb-4">Never Miss an Adventure</h2>
             <p className="text-xl mb-8 max-w-2xl mx-auto text-blue-100">

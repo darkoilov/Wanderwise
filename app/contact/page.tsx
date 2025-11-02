@@ -87,7 +87,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+      <section className="relative py-10 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl font-bold mb-6">Get In Touch</h1>

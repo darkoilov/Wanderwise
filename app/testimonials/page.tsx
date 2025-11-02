@@ -84,7 +84,7 @@ export default function TestimonialsPage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+      <section className="relative py-10 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-5xl font-bold mb-6">What Our Travelers Say</h1>
@@ -113,7 +113,7 @@ export default function TestimonialsPage() {
       </section>
 
       {/* Testimonials Grid */}
-      <section className="py-20">
+      <section className="py-10">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
@@ -186,7 +186,7 @@ export default function TestimonialsPage() {
       </section>
 
       {/* Video Testimonials Section */}
-      <section className="py-20 bg-gray-50">
+      <section className="py-10 bg-gray-50">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Video Stories</h2>
@@ -236,7 +236,7 @@ export default function TestimonialsPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+      <section className="py-10 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl font-bold mb-4">Ready to Create Your Own Story?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">

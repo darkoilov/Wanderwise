@@ -6,7 +6,11 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const sanitize = (s: any) =>
-    String(s ?? "").replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim()
+  String(s ?? "")
+    .replace(/<[^>]+>/g, "")
+    .replace(/\r\n/g, "\n")
+    .replace(/[^\S\n]+/g, " ")
+    .trim();
 
 export const slugify = (s: string) =>
     s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "")

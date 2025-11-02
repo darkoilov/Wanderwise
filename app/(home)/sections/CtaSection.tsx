@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 export default function CtaSection() {
     return (
-        <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+        <section className="py-10 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
             <div className="container mx-auto px-4 text-center">
                 <h2 className="text-4xl font-bold mb-4">Ready for Your Next Adventure?</h2>
                 <p className="text-xl mb-8 max-w-2xl mx-auto">

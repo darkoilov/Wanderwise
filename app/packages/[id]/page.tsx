@@ -13,6 +13,7 @@ type IconKey = keyof typeof ICONS
 
 export default async function PackageDetailPage({ params }: { params: { id: string } }) {
   const packageData = await PackageService.getPackageById(params.id)
+  console.log("packageData",packageData)
 
   if (!packageData) notFound()
 
@@ -87,7 +88,7 @@ export default async function PackageDetailPage({ params }: { params: { id: stri
             <div className="lg:col-span-2 space-y-10">
               <div className="bg-white p-8 rounded-2xl shadow-sm border">
                 <h2 className="text-3xl font-bold text-gray-900 mb-6">About This Trip</h2>
-                <p className="text-gray-700 text-lg leading-relaxed">{packageData.description}</p>
+                <p className="text-gray-700 text-lg leading-relaxed whitespace-pre-line">{packageData.description}</p>
               </div>
 
               <div className="bg-white p-8 rounded-2xl shadow-sm border">
@@ -102,7 +103,7 @@ export default async function PackageDetailPage({ params }: { params: { id: stri
                         </div>
                         <div className="flex-1">
                           <h3 className="font-bold text-gray-900 mb-3 text-lg">{item.title}</h3>
-                          <p className="text-gray-600 leading-relaxed">{item.description}</p>
+                          <p className="text-gray-600 leading-relaxed whitespace-pre-line">{item.description}</p>
                         </div>
                       </div>
                     )

@@ -1,4 +1,3 @@
-import SeasonalSection from "@/app/(home)/sections/SeasonalSection";
 
 export const revalidate = 300;
 
@@ -11,6 +10,7 @@ import WhyUsSection from "./(home)/sections/WhyUsSection";
 import InspirationSection from "./(home)/sections/InspirationSection";
 import TestimonialsSection from "./(home)/sections/TestimonialsSection";
 import CtaSection from "./(home)/sections/CtaSection";
+import StandardSection from "@/app/(home)/sections/StandardSection";
 
 export default async function HomePage() {
     return (
@@ -18,9 +18,16 @@ export default async function HomePage() {
             <DiscountModalWrapper />
             <Hero />
             <MissionSection />
-            <SeasonalSection />
-            <FeaturedSection />
+             <div id="special-deals" >
             <SpecialDealsSection />
+            </div>
+            <div id="standard" className="hidden md:block">
+            <StandardSection />
+            </div>
+            <div className="hidden md:block">
+            <FeaturedSection />
+            </div>
+           
             <WhyUsSection />
             <InspirationSection />
             <TestimonialsSection />
