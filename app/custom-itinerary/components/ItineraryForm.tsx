@@ -318,7 +318,6 @@ export default function ItineraryForm() {
                                 <SelectValue placeholder="Select accommodation type" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="budget">Budget (Hostels, Budget Hotels)</SelectItem>
                                 <SelectItem value="mid-range">Mid-range (3-4 Star Hotels)</SelectItem>
                                 <SelectItem value="luxury">Luxury (5 Star Hotels, Resorts)</SelectItem>
                                 <SelectItem value="unique">Unique (Boutique, Local Stays)</SelectItem>

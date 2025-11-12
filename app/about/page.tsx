@@ -68,11 +68,11 @@ export default function AboutPage() {
         {/* Background Image with overlay */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/young-couple-traveling-world.jpg"
+            src="/about2.jpeg"
             alt="Young couple traveling"
             fill
             className="object-cover"
-            style={{ objectPosition: "center 30%" }}
+            style={{ objectPosition: "center 44%" }}
             priority
           />
           {/* Smooth overlay */}
@@ -105,7 +105,7 @@ export default function AboutPage() {
             <div className="relative">
               <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl">
                 <Image
-                  src="/young-couple-traveling-world.jpg"
+                  src="/about.jpeg"
                   alt="Young couple traveling"
                   fill
                   className="object-cover"

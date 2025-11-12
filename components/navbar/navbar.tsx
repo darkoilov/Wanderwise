@@ -20,7 +20,7 @@ export default async function Navbar() {
     { name: "How It Works", href: "/how-it-works" },
     { name: "Custom Itinerary", href: "/custom-itinerary" },
     { name: "Blog", href: "/blog" },
-    { name: "Testimonials", href: "/testimonials" },
+    // { name: "Testimonials", href: "/testimonials" },
     { name: "Contact", href: "/contact" },
   ]
 
@@ -30,11 +30,10 @@ export default async function Navbar() {
   ]
 
   // Keep Home, About, Packages as top-level visible links
-  const topLevel = navigation.filter((item) => ["/", "/about", "/about2", "/packages"].includes(item.href))
+  const topLevel = navigation.filter((item) => ["/", "/about", "/about2", "/packages", "/blog", "/contact"].includes(item.href))
 
   // Group others into Explore / Resources
   const exploreItems = navigation.filter((item) => ["/how-it-works", "/custom-itinerary"].includes(item.href))
-  const resourceItems = navigation.filter((item) => ["/blog", "/testimonials", "/contact"].includes(item.href))
 
   return (
     <nav
@@ -89,30 +88,7 @@ export default async function Navbar() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Resources Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="flex items-center space-x-1 px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-all duration-200 hover:bg-blue-50 rounded-md focus:outline-none">
-                  <span>Resources</span>
-                  <ChevronDown className="h-4 w-4 transition-transform duration-300" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56 animate-in fade-in slide-in-from-top-2 duration-200">
-                <div className="px-2 py-1.5">
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide px-2 pb-2">
-                    Learn & Connect
-                  </p>
-                  {resourceItems.map(({ name, href }) => (
-                    <DropdownMenuItem key={href} asChild className="rounded-md transition-colors duration-150">
-                      <Link href={href} className="cursor-pointer">
-                        {name}
-                      </Link>
-                    </DropdownMenuItem>
-                  ))}
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
+           
             {/* Admin dropdown (if admin) */}
             {isAdmin && (
               <DropdownMenu>
@@ -153,7 +129,6 @@ export default async function Navbar() {
           <MobileMenu
             navigation={navigation}
             exploreItems={exploreItems}
-            resourceItems={resourceItems}
             isAdmin={isAdmin}
             adminRoutes={adminRoutes}
             user={user}

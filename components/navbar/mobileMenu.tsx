@@ -12,14 +12,12 @@ type NavItem = { name: string; href: string }
 export default function MobileMenu({
   navigation,
   exploreItems,
-  resourceItems,
   isAdmin,
   adminRoutes,
   user,
 }: {
   navigation: NavItem[]
   exploreItems: NavItem[]
-  resourceItems: NavItem[]
   isAdmin: boolean
   adminRoutes: { name: string; href: string }[]
   user: any
@@ -97,20 +95,6 @@ export default function MobileMenu({
                 }`}
               />
             </button>
-            {expandedSection === "resources" && (
-              <div className="flex flex-col space-y-2 mt-2 pl-2">
-                {resourceItems.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setOpen(false)}
-                    className="px-4 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 rounded-md text-sm"
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-              </div>
-            )}
           </div>
 
           {isAdmin && (

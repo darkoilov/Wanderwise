@@ -83,7 +83,7 @@ export default function AboutPage() {
               <div className="relative">
                 <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl">
                   <Image
-                      src="/placeholder.svg?height=500&width=600&text=Young+Couple+Traveling"
+                      src="/about.jpeg?height=500&width=600&text=Young+Couple+Traveling"
                       alt="Young couple traveling"
                       fill
                       className="object-cover"

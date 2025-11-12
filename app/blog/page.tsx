@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Search } from "lucide-react"
 import BlogCard, { type BlogPost } from "./components/BlogCard"
 import FeaturedBlogCard from "./components/FeaturedBlogCard"
+import { BlogService } from "@/lib/services/BlogService";
 
 const categories = [
   "All",
@@ -23,9 +24,10 @@ async function getData(): Promise<{
 }> {
   // Try backend first (adjust endpoint/path later)
   try {
-    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/blog?limit=12`, {
+    const res = await fetch(`/api/blog?limit=12`, {
       next: { revalidate: 300 },
     })
+    console.log("res",res)
     if (res.ok) {
       const json = await res.json()
       if (Array.isArray(json?.data)) {
@@ -131,7 +133,10 @@ async function getData(): Promise<{
 export const revalidate = 300
 
 export default async function BlogPage() {
-  const { featured, posts } = await getData()
+  const { featured } = await getData()
+  const {posts} = await BlogService.getAllPosts({})
+  console.log("posts",posts)
+  // treba da imas opcija za featured i za latest
 
   return (
       <div className="min-h-screen">
@@ -170,14 +175,14 @@ export default async function BlogPage() {
         </section>
 
         {/* Featured */}
-        {featured && (
+        {posts[0] && (
             <section className="py-16">
               <div className="container mx-auto px-4">
                 <div className="max-w-6xl mx-auto">
                   <div className="mb-8">
                     <Badge className="bg-blue-600 text-white mb-4">Featured Article</Badge>
                   </div>
-                  <FeaturedBlogCard post={featured} />
+                  <FeaturedBlogCard post={posts[0]} />
                 </div>
               </div>
             </section>
